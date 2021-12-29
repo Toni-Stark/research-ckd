@@ -1,6 +1,7 @@
 import React from "react";
 import { Research } from "../pages/Research";
 import { MainLayout } from "../component/MainLayout";
+import {Files} from "../pages/Files";
 
 export const router = [
   {
@@ -12,6 +13,14 @@ export const router = [
     element: (
       <MainLayout>
         <Research />
+      </MainLayout>
+    ),
+  },
+  {
+    name: "/files",
+    element: (
+      <MainLayout>
+        <Files />
       </MainLayout>
     ),
   },

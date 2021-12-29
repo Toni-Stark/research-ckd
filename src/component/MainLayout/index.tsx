@@ -1,7 +1,14 @@
-import React from "react";
-import { Breadcrumb, Layout, Menu } from "antd";
-// import styles from "./index.module.less";
-import styles from "./index.scss";
+import React, { useEffect, useState } from "react";
+import { Button, Layout, Menu } from "antd";
+import "./index.scss";
+import { useNavigate } from "react-router";
+import {
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+  AreaChartOutlined,
+  HomeOutlined,
+  FileZipOutlined,
+} from "@ant-design/icons";
 /* 图片 */
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -11,14 +18,51 @@ const headerLayout = [
   {
     name: "项目管理",
     key: "1",
-    router: "research",
+    icon: <HomeOutlined />,
+    router: "/research",
+  },
+  {
+    name: "项目文件",
+    key: "2",
+    icon: <FileZipOutlined />,
+    router: "/files",
+  },
+];
+
+const MenuLayout = [
+  {
+    name: "项目管理",
+    key: "51",
+    icon: <AreaChartOutlined />,
+    children: [
+      {
+        name: "项目管理",
+        key: "101",
+        router: "/research",
+      },
+      {
+        name: "患者管理",
+        key: "102",
+        router: "/files",
+      },
+    ],
   },
 ];
 
 const MainLayout = (props: any) => {
+  const navigator = useNavigate();
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const changeLayout = (e: any) => {
+    navigator(e.router);
+  };
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+
   return (
     <Layout>
-      <Header className={styles.header}>
+      <Header className="header">
         <div className="logo">临床科研管理系统</div>
         <Menu
           theme="light"
@@ -27,40 +71,63 @@ const MainLayout = (props: any) => {
           className="layout"
         >
           {headerLayout.map((item) => (
-            <Menu.Item className="layoutItem" key={item.key}>
+            <Menu.Item
+              className="layoutItem"
+              key={item.key}
+              icon={item.icon}
+              onClick={() => {
+                changeLayout(item);
+              }}
+            >
               {item.name}
             </Menu.Item>
           ))}
         </Menu>
       </Header>
-      <Layout>
-        <Sider width={200} className="site-layout-background">
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            style={{ height: "100%", borderRight: 0 }}
+      <Layout className="body-layout">
+        <div style={{ backgroundColor: "white", width: collapsed ? 80 : 200 }}>
+          <Button
+            onClick={() => {
+              toggleCollapsed();
+            }}
+            style={{
+              width: collapsed ? 80 : 200,
+              height: 50,
+              borderRadius: 0,
+              borderWidth: 0,
+            }}
           >
-            <SubMenu key="sub1" title="subnav 1">
-              <Menu.Item key="1">option1</Menu.Item>
-              <Menu.Item key="2">option2</Menu.Item>
-              <Menu.Item key="3">option3</Menu.Item>
-              <Menu.Item key="4">option4</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" title="subnav 2">
-              <Menu.Item key="5">option5</Menu.Item>
-              <Menu.Item key="6">option6</Menu.Item>
-              <Menu.Item key="7">option7</Menu.Item>
-              <Menu.Item key="8">option8</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub3" title="subnav 3">
-              <Menu.Item key="9">option9</Menu.Item>
-              <Menu.Item key="10">option10</Menu.Item>
-              <Menu.Item key="11">option11</Menu.Item>
-              <Menu.Item key="12">option12</Menu.Item>
-            </SubMenu>
-          </Menu>
-        </Sider>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </Button>
+          <Sider theme="light" collapsed={collapsed}>
+            <div className="site-layout-background">
+              <Menu
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                defaultOpenKeys={["sub1"]}
+                style={{ height: "100%", borderRight: 0 }}
+                inlineCollapsed={collapsed}
+                inlineIndent={12}
+              >
+                {MenuLayout.map((item) => (
+                  <SubMenu key={item.key} title={item.name} icon={item.icon}>
+                    {item.children.map((child) => (
+                      <Menu.Item
+                        key={child.key}
+                        onClick={() => {
+                          navigator(child.router);
+                        }}
+                      >
+                        {child.name}
+                      </Menu.Item>
+                    ))}
+                  </SubMenu>
+                ))}
+              </Menu>
+            </div>
+          </Sider>
+        </div>
+
         <Layout style={{ padding: "0 24px 24px" }}>
           {/*<Breadcrumb style={{ margin: "16px 0" }}>*/}
           {/*  <Breadcrumb.Item>Home</Breadcrumb.Item>*/}
@@ -68,7 +135,6 @@ const MainLayout = (props: any) => {
           {/*  <Breadcrumb.Item>App</Breadcrumb.Item>*/}
           {/*</Breadcrumb>*/}
           <Content
-            className="site-layout-background"
             style={{
               padding: 24,
               margin: 0,
