@@ -1,6 +1,7 @@
 import React from "react";
 import { Breadcrumb, Layout, Menu } from "antd";
-import styles from "./index.module.less";
+// import styles from "./index.module.less";
+import styles from "./index.scss";
 /* 图片 */
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
